@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Env files (never commit real secrets)
+.env
+frontend/.env
+backend/.env
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# Server-generated certificate assets (QR codes / PDFs) — local dev only.
+# Instrument photos, application documents, and verification photos are no
+# longer stored on disk at all; they upload straight to Cloudinary.
+backend/uploads/*
+!backend/uploads/certificates/.gitkeep
+
+# Logs / OS junk
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

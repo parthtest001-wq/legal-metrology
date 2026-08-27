@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- MERGE ADDITION (Module 7): manifest.json existed in /public but was
+         never linked, so no browser would ever discover it or offer
+         "Add to Home Screen". theme-color kept in sync with manifest.json's
+         theme_color. -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1d4ed8" />
+    <title>Online Verification System — Legal Metrology</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
