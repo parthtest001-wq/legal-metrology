@@ -43,7 +43,7 @@ export default function MyApplications() {
             </p>
           </div>
           <Link
-            to="/applications/new"
+            to="/consumer/applications/new"
             className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white"
           >
             + New application
