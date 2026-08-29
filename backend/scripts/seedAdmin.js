@@ -24,7 +24,7 @@ async function seed() {
   const admin = await User.create({
     name: 'System Administrator',
     email,
-    phone: process.env.SEED_ADMIN_PHONE || '9999999999',
+    phone: process.env.SEED_ADMIN_PHONE || '1111111111',
     passwordHash: password,
     role: ROLES.ADMIN,
     state: 'NA',
