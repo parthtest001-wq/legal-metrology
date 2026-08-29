@@ -30,7 +30,16 @@ const APP_SHELL_URLS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(APP_SHELL_CACHE).then((cache) => cache.addAll(APP_SHELL_URLS))
+    caches
+      .open(APP_SHELL_CACHE)
+      .then((cache) => cache.addAll(APP_SHELL_URLS))
+      .catch((err) => {
+        // If precaching fails (e.g. offline at the exact moment the SW
+        // registers), don't let it silently abort installation — log it so
+        // it's at least visible in DevTools, and let skipWaiting proceed so
+        // the SW can still activate and try caching on subsequent fetches.
+        console.error('[service-worker] App shell precache failed:', err);
+      })
   );
   self.skipWaiting();
 });
@@ -85,7 +94,17 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(request).then((cached) => cached || fetch(request))
+    caches
+      .match(request)
+      .then((cached) => cached || fetch(request))
+      .catch(() => {
+        // Neither a cached copy nor the network came through — this is the
+        // gap that produced the unhandled "TypeError: Failed to fetch".
+        // There's nothing meaningful to serve for an arbitrary static
+        // asset here, so respond with a real (if empty) Response instead
+        // of letting the fetch handler's promise reject.
+        return new Response('', { status: 504, statusText: 'Offline and not cached' });
+      })
   );
 });
 
