@@ -90,7 +90,7 @@ export default function NewApplicationForm() {
         documents
       );
 
-      navigate(`/applications/${application._id}`);
+      navigate(`/consumer/applications/${application._id}`);
     } catch (err) {
       setSubmitError(
         err?.response?.data?.message || 'Something went wrong while submitting. Please try again.'

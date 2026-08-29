@@ -131,7 +131,7 @@ export default function MyApplications() {
                     <StatusBadge status={app.status} />
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Link to={`/applications/${app._id}`} className="text-teal-700 hover:underline">
+                    <Link to={`/consumer/applications/${app._id}`} className="text-teal-700 hover:underline">
                       View
                     </Link>
                   </td>

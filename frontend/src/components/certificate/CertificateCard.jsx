@@ -16,7 +16,7 @@ export default function CertificateCard({ certificate }) {
 
   return (
     <Link
-      to={`/certificates/${certificate._id}`}
+      to={`/consumer/certificates/${certificate._id}`}
       className="block rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow bg-white"
     >
       <div className="flex items-start justify-between">
