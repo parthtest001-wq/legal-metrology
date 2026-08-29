@@ -22,6 +22,7 @@ import FieldPhotoCapture from './FieldPhotoCapture';
 // named `submitVerification` export exists; the real (default-exported)
 // method is `recordVerification`, taking one options object.
 import schedulingService from '../../services/schedulingService';
+import { generateCertificate } from '../../services/certificateService';
 import { enqueueInspection } from '../../services/offlineQueueService';
 
 const RESULT_OPTIONS = ['pass', 'fail'];
@@ -75,7 +76,17 @@ export default function FieldInspectionForm({ applicationId, onSubmitted }) {
         // MERGE FIX: recordVerification takes the payload fields plus
         // `photos` in a single object, not three positional args.
         await schedulingService.recordVerification(applicationId, { ...payload, photos: files });
-        onSubmitted('online');
+        let certificateId = null;
+        if (overallResult === 'pass') {
+          try {
+            const certRes = await generateCertificate(applicationId);
+            certificateId = certRes?.data?.certificate?._id || null;
+          } catch {
+            // Verification itself succeeded; surface the cert gap via
+            // onSubmitted rather than blocking the confirmation screen.
+          }
+        }
+        onSubmitted('online', certificateId);
       } else {
         await enqueueInspection(
           applicationId,

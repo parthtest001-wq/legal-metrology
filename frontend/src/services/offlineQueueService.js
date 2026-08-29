@@ -24,6 +24,7 @@
 // observations, overallResult, remarks, photos })`, not three positional
 // args. Both the import and the call below were fixed to match.
 import schedulingService from './schedulingService';
+import { generateCertificate } from './certificateService';
 
 const DB_NAME = 'smi_field_offline_db';
 const DB_VERSION = 1;
@@ -168,6 +169,18 @@ export async function trySyncQueue(onProgress) {
         ...item.payload,
         photos: files,
       });
+      if (item.payload?.overallResult === 'pass') {
+        // Same gap as the online path: a pass doesn't produce a certificate
+        // on its own. Best-effort here — if it fails, the certificate can
+        // still be generated later from the application detail page, and we
+        // don't want a certificate hiccup to re-queue an already-recorded
+        // inspection.
+        try {
+          await generateCertificate(item.applicationId);
+        } catch {
+          // swallow — verification itself synced fine
+        }
+      }
       await removeItem(item.id);
       synced += 1;
     } catch (err) {

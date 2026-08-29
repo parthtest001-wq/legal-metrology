@@ -31,6 +31,7 @@ import RecordInspection from '../pages/lmo/RecordInspection.jsx';
 import MyCertificates from '../pages/consumer/MyCertificates.jsx';
 import CertificateDetail from '../pages/consumer/CertificateDetail.jsx';
 import VerifyCertificate from '../pages/public/VerifyCertificate.jsx';
+import LandingPage from '../pages/public/LandingPage.jsx';
 
 // Module 6 — dashboards & search (these self-wrap in <AppLayout>, see note
 // below — do not wrap them in AppLayout again here)
@@ -68,7 +69,7 @@ const withLayout = (title, element) => <AppLayout title={title}>{element}</AppLa
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login/consumer" replace />} />
+      <Route path="/" element={<LandingPage />} />
 
       {/* --- Public: auth (Module 1) --- */}
       <Route path="/login/consumer" element={<ConsumerLogin />} />
@@ -146,6 +147,10 @@ export default function AppRoutes() {
       <Route
         path="/lmo/verification/:applicationId"
         element={<ProtectedRoute allowedRoles={['lmo']}>{withLayout('Record Inspection', <RecordInspection />)}</ProtectedRoute>}
+      />
+      <Route
+        path="/lmo/certificates/:id"
+        element={<ProtectedRoute allowedRoles={['lmo']}>{withLayout('Certificate', <CertificateDetail />)}</ProtectedRoute>}
       />
       {/* Module 7's PWA field-mode screens — same underlying workflow as
           /lmo/queue and /lmo/verification/:id above, built offline-first

@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import schedulingService from '../../services/schedulingService';
+import { generateCertificate } from '../../services/certificateService';
 
 const emptyObservation = () => ({ parameter: '', expectedValue: '', observedValue: '', result: 'pass' });
 
@@ -51,6 +52,36 @@ export default function InspectionForm() {
         photos,
       });
       if (result.success) {
+        if (overallResult === 'pass') {
+          // A pass moves the application to a completed state, but the
+          // certificate itself is a separate resource — it doesn't exist
+          // until this call creates it. Without this, the consumer's
+          // certificate page has nothing to show and the QR is never
+          // generated.
+          try {
+            const certRes = await generateCertificate(applicationId);
+            const certId = certRes?.data?.certificate?._id;
+            if (certId) {
+              navigate(`/lmo/certificates/${certId}`);
+              return;
+            }
+          } catch (certErr) {
+            // A 409 here means the certificate was already generated on a
+            // previous attempt (e.g. the user double-submitted) — that's not
+            // really a failure, just point them at the application instead
+            // of showing an error for something that already worked.
+            if (certErr?.response?.status === 409) {
+              navigate(-1);
+              return;
+            }
+            setErrorMsg(
+              certErr?.response?.data?.message ||
+                'Inspection recorded, but the certificate could not be generated. Please try again from the application detail page.'
+            );
+            setSubmitting(false);
+            return;
+          }
+        }
         navigate(-1);
       } else {
         setErrorMsg(result.message || 'Failed to record inspection.');

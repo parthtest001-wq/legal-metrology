@@ -16,6 +16,7 @@ import FieldSyncStatusBadge from '../../components/scheduling/FieldSyncStatusBad
 export default function FieldInspection() {
   const { applicationId } = useParams();
   const [submittedMode, setSubmittedMode] = useState(null); // 'online' | 'offline' | null
+  const [certificateId, setCertificateId] = useState(null);
 
   return (
     <div className="field-inspection-page max-w-2xl mx-auto p-4 space-y-4">
@@ -28,6 +29,16 @@ export default function FieldInspection() {
               ? '✅ Inspection submitted.'
               : '📥 Offline — inspection queued and will sync automatically.'}
           </p>
+          {submittedMode === 'online' && certificateId && (
+            <Link to={`/lmo/certificates/${certificateId}`} className="text-blue-600 underline text-sm block">
+              View certificate &amp; QR code
+            </Link>
+          )}
+          {submittedMode === 'offline' && (
+            <p className="text-sm text-gray-500">
+              If this inspection passes, its certificate will be generated once it syncs.
+            </p>
+          )}
           <Link to="/lmo/field" className="text-blue-600 underline text-sm">
             Back to My Queue
           </Link>
@@ -36,7 +47,10 @@ export default function FieldInspection() {
         <FieldApplicationDetail applicationId={applicationId}>
           <FieldInspectionForm
             applicationId={applicationId}
-            onSubmitted={(mode) => setSubmittedMode(mode)}
+            onSubmitted={(mode, certId) => {
+              setSubmittedMode(mode);
+              setCertificateId(certId || null);
+            }}
           />
         </FieldApplicationDetail>
       )}
